@@ -1,0 +1,36 @@
+# Build files
+.gradle
+.kotlin
+build
+out
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.ap_
+*.dex
+*.hprof
+*.log
+
+# IDE files
+*.iml
+.idea/*
+!.idea/icon.svg
+/captures
+.vscode/
+
+# Signing and configuration files
+keystore.properties
+local.properties
+secrets.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db

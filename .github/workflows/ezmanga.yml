@@ -1,0 +1,56 @@
+name: EZManga CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & Test EZManga
+    runs-on: ubuntu-26.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version-file: .github/.java-version
+          distribution: temurin
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Check formatting
+        run: >
+          ./gradlew
+          :ezmanga-core:spotlessCheck
+          :ezmanga-tv:spotlessCheck
+          :ezmanga-mobile:spotlessCheck
+          --console=plain
+
+      - name: Run unit tests
+        run: ./gradlew :ezmanga-core:testDebugUnitTest --console=plain
+
+      - name: Build debug APKs
+        run: >
+          ./gradlew
+          :ezmanga-tv:assembleDebug
+          :ezmanga-mobile:assembleDebug
+          --console=plain
+
+      - name: Upload debug APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ezmanga-debug-apks
+          if-no-files-found: error
+          path: |
+            ezmanga-tv/build/outputs/apk/debug/ezmanga-tv-debug.apk
+            ezmanga-mobile/build/outputs/apk/debug/ezmanga-mobile-debug.apk
